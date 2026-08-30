@@ -72,37 +72,30 @@ Polygon Amoy. See "Blockchain Modes" below.
 
 ## Screenshots
 
-> **To add these:** save each screenshot into `docs/images/` using the
-> **exact filename** shown below. Once pushed to GitHub, these will
-> display automatically — no other changes needed.
-
 ### Employee Dashboard
 All four loan applications with Risk Meter, CIBIL, and requested amount at a glance.
 
-`docs/images/01-dashboard.png`
+<img width="1917" height="1092" alt="Screenshot 2026-08-30 081817" src="https://github.com/user-attachments/assets/66bd44a4-a064-4e95-bccc-6c846d9b1e57" />
 
-![Dashboard](docs/images/01-dashboard.png)
 
 ### Applicant Detail — Risk Meter Breakdown
 Full Risk Meter gauge with all seven work-history sub-scores.
 
-`docs/images/02-applicant-detail.png`
+<img width="1917" height="1091" alt="Screenshot 2026-08-30 081835" src="https://github.com/user-attachments/assets/07b07a58-2951-4a4c-83a1-81798b9ca469" />
+<img width="1917" height="1088" alt="Screenshot 2026-08-30 081856" src="https://github.com/user-attachments/assets/0e882018-3aae-46a4-b19c-30548c1338db" />
 
-![Applicant Detail](docs/images/02-applicant-detail.png)
 
 ### Blockchain Ledger
 Every recorded decision, hash-linked and chain-verified.
 
-`docs/images/03-blockchain-ledger.png`
+<img width="1917" height="1093" alt="Screenshot 2026-08-30 081945" src="https://github.com/user-attachments/assets/7aaa637d-7867-4937-8011-b59e7a0fe6ca" />
 
-![Blockchain Ledger](docs/images/03-blockchain-ledger.png)
 
 ### Reports & Analytics
 Portfolio-level charts across all applications.
 
-`docs/images/04-reports-analytics.png`
+<img width="1917" height="1092" alt="Screenshot 2026-08-30 081921" src="https://github.com/user-attachments/assets/77e2581c-5ac7-4798-a97d-9f50396fcd82" />
 
-![Reports and Analytics](docs/images/04-reports-analytics.png)
 
 ---
 
@@ -114,23 +107,20 @@ genuinely deployed and tested on Polygon Amoy, a live public test network.
 ### Wallet connected to Polygon Amoy
 MetaMask showing the active network and test MATIC balance used to pay for deployment and transactions.
 
-`docs/images/05-metamask-polygon-amoy.png`
+<img width="471" height="687" alt="Screenshot 2026-08-30 082045" src="https://github.com/user-attachments/assets/07727ff6-0c36-468c-8e9f-732a8063b552" />
 
-![MetaMask Polygon Amoy](docs/images/05-metamask-polygon-amoy.png)
 
 ### Smart contract compiled successfully
 The `GigWorkerLoanLedger.sol` contract compiled with no errors in Remix IDE.
 
-`docs/images/06-remix-compiled.png`
+<img width="533" height="856" alt="Screenshot 2026-08-30 082418" src="https://github.com/user-attachments/assets/4b695556-0ba2-4bdd-8c8e-f782821ab6a9" />
 
-![Remix Compiled](docs/images/06-remix-compiled.png)
 
 ### Contract deployed on-chain
 The deployed contract address, live on Polygon Amoy.
 
-`docs/images/07-remix-deployed-contract.png`
+<img width="522" height="951" alt="Screenshot 2026-08-30 082431" src="https://github.com/user-attachments/assets/6c0f697c-2d0f-4ea2-b109-cc7223ab1dee" />
 
-![Remix Deployed Contract](docs/images/07-remix-deployed-contract.png)
 
 ---
 
