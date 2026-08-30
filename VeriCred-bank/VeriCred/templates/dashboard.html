@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block title %}Loan Requests &mdash; VeriCred{% endblock %}
+{% block content %}
+
+<div class="stat-strip">
+  <div class="stat-card"><div class="value">{{ stats.total }}</div><div class="label">Total Requests</div></div>
+  <div class="stat-card"><div class="value">{{ stats.pending }}</div><div class="label">Pending Review</div></div>
+  <div class="stat-card"><div class="value">{{ stats.forwarded }}</div><div class="label">Forwarded to Manager</div></div>
+  <div class="stat-card"><div class="value">{{ stats.declined }}</div><div class="label">Declined</div></div>
+  <div class="stat-card"><div class="value">{{ stats.avg_risk }}</div><div class="label">Avg. Risk Meter</div></div>
+</div>
+
+<div class="section-title">Gig Worker Loan Requests</div>
+<div class="applicant-grid">
+  {% for a in applications %}
+  <div class="applicant-card glow-hover">
+    <div class="top-row">
+      <div>
+        <div class="avatar-box">{{ a.display_id }}</div>
+        <div class="applicant-name">{{ a.applicant_name }}</div>
+        <div class="applicant-meta">{{ a.application_id }} &middot; Worker #{{ a.worker_id }}</div>
+      </div>
+      {% if a.workflow_status == 'Forwarded to Manager' %}
+        <span class="pill pill-forwarded"><span class="pill-dot"></span>With Manager</span>
+      {% elif a.workflow_status == 'Declined by Officer' %}
+        <span class="pill pill-declined"><span class="pill-dot"></span>Declined</span>
+      {% else %}
+        <span class="pill pill-pending"><span class="pill-dot"></span>Pending</span>
+      {% endif %}
+    </div>
+
+    <div class="card-stats">
+      <div>
+        <div class="label">Risk Meter</div>
+        <div class="value" style="color: {{ '#9C7A24' if a.risk_color=='green' else ('#C1662F' if a.risk_color=='amber' else '#B42318') }};">{{ a.risk_meter }}<span style="font-size:12px;color:var(--text-secondary);">/100</span></div>
+      </div>
+      <div>
+        <div class="label">CIBIL Score</div>
+        <div class="value">{{ a.cibil_score }}</div>
+      </div>
+      <div>
+        <div class="label">Requested Amount</div>
+        <div class="value">&#8377;{{ "{:,}".format(a.requested_loan_inr) }}</div>
+      </div>
+      <div>
+        <div class="label">Bank Balance</div>
+        <div class="value">&#8377;{{ "{:,}".format(a.bank_balance_inr) }}</div>
+      </div>
+    </div>
+
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+      {% if a.blockchain_verified %}
+        <span class="badge-verified">&#10003; On-chain Record</span>
+      {% else %}
+        <span class="badge-unverified">&#9679; Awaiting Review</span>
+      {% endif %}
+      <a href="{{ url_for('applicant_detail', worker_id=a.worker_id) }}" class="btn btn-primary">Review Request</a>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+{% endblock %}
+
+{% block extra_scripts %}
+<!-- Card entrances are handled by the CSS slideUp keyframe animation
+     already defined in style.css (.stat-card / .applicant-card). A GSAP
+     fade was previously added here too, which fought the CSS animation
+     for control of the same opacity property and left cards stuck
+     mid-transition — removed rather than layering a second animation
+     system on top of one that already worked. -->
+{% endblock %}

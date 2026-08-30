@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}Transactions &mdash; VeriCred{% endblock %}
+{% block content %}
+
+<div class="section-title">Transaction History</div>
+<p style="font-size:13px;color:var(--text-secondary);margin-top:-8px;margin-bottom:20px;">
+  Every loan decision recorded on the blockchain ledger, most recent first. This is the same
+  immutable data shown on the <a href="{{ url_for('blockchain_page') }}" style="color:var(--indigo);">Blockchain Ledger</a> page, presented here as a transaction log.
+</p>
+
+{% if not records %}
+<div class="panel">
+  <p style="font-size:13.5px;color:var(--text-secondary);">No transactions recorded yet &mdash; forward or decline an application from the dashboard to create the first one.</p>
+</div>
+{% endif %}
+
+{% for block in records %}
+<div class="chain-block">
+  <div class="block-header">
+    <span class="block-index">Block #{{ block.index }} &middot; {{ block.data.action.replace('_',' ') }}</span>
+    <span style="font-size:12px;color:var(--text-secondary);">{{ block.timestamp }}</span>
+  </div>
+  <div class="two-col" style="margin-bottom:10px;">
+    <div>
+      <div class="kv-row"><span class="k">Applicant</span><span class="v">{{ block.data.applicant_name }} (#{{ block.data.worker_id }})</span></div>
+      <div class="kv-row"><span class="k">Application ID</span><span class="v">{{ block.data.application_id }}</span></div>
+      <div class="kv-row"><span class="k">Requested</span><span class="v">&#8377;{{ "{:,}".format(block.data.requested_amount_inr) }}</span></div>
+    </div>
+    <div>
+      <div class="kv-row"><span class="k">AI Score</span><span class="v">{{ block.data.ai_score }}</span></div>
+      <div class="kv-row"><span class="k">Risk Meter</span><span class="v">{{ block.data.risk_meter }} ({{ block.data.risk_band }})</span></div>
+      <div class="kv-row"><span class="k">Reviewed By</span><span class="v" style="font-size:12px;">{{ block.data.reviewed_by }}</span></div>
+    </div>
+  </div>
+  {% set r = receipts[block.index] %}
+  <div style="font-size:12px;color:var(--text-secondary);">
+    Tx: <span class="mono">{{ r.tx_hash[:26] }}...</span> &middot; Gas: <span class="mono">{{ r.gas_used }}</span> &middot; Confirmations: <span class="mono">{{ r.confirmations }}</span>
+  </div>
+</div>
+{% endfor %}
+
+{% endblock %}

@@ -1,0 +1,99 @@
+html, body { margin: 0; padding: 0; overflow: hidden; background: #000; height: 100%; }
+
+#introVideo {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  object-fit: cover;
+  z-index: 1;
+  background: #000;
+}
+
+#introBrand {
+  position: fixed;
+  top: 28px; left: 32px;
+  z-index: 6;
+  color: #FBF1D9;
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 700;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-shadow: 0 2px 10px rgba(0,0,0,0.6);
+}
+#introBrand .mark {
+  width: 30px; height: 30px; border-radius: 8px;
+  background: linear-gradient(135deg, #D4AF37, #9C7A24);
+}
+
+#skipIntroBtn {
+  position: fixed;
+  top: 28px; right: 32px;
+  z-index: 6;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(251, 241, 217, 0.4);
+  color: #FBF1D9;
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  padding: 9px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  backdrop-filter: blur(6px);
+  transition: background .2s ease, transform .15s ease;
+}
+#skipIntroBtn:hover { background: rgba(0, 0, 0, 0.6); transform: translateY(-1px); }
+
+#unmuteBtn {
+  position: fixed;
+  bottom: 28px; right: 32px;
+  z-index: 6;
+  background: rgba(0, 0, 0, 0.45);
+  border: 1px solid rgba(251, 241, 217, 0.4);
+  color: #FBF1D9;
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  padding: 9px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+#unmuteBtn:hover { background: rgba(0, 0, 0, 0.65); }
+
+/* ---------------- Transition overlay after the video ends ---------------- */
+#vaultOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background: radial-gradient(circle at center, #2E2415 0%, #140E06 75%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .5s ease;
+}
+#vaultOverlay.visible { opacity: 1; pointer-events: all; }
+
+.vault-wheel {
+  width: 120px; height: 120px;
+  border-radius: 50%;
+  border: 3px solid rgba(212, 175, 55, 0.25);
+  border-top-color: #D4AF37;
+  border-right-color: #E9D08C;
+  animation: vaultSpin 1.2s linear infinite;
+  margin-bottom: 22px;
+}
+@keyframes vaultSpin { to { transform: rotate(360deg); } }
+
+.vault-label {
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #B8A57D;
+}

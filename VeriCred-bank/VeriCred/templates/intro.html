@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VeriCred — Employee Portal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/intro.css') }}">
+</head>
+<body>
+
+  <div id="introBrand"><div class="mark"></div>VeriCred</div>
+  <button id="skipIntroBtn" type="button">Skip intro &rarr;</button>
+
+  <video id="introVideo" autoplay muted playsinline preload="auto">
+    <source src="{{ url_for('static', filename='video/intro.mp4') }}" type="video/mp4">
+  </video>
+
+  <button id="unmuteBtn" type="button">&#128264; Unmute</button>
+
+  <div id="vaultOverlay">
+    <div class="vault-wheel"></div>
+    <div class="vault-label">Verifying secure access&hellip;</div>
+  </div>
+
+  <script>
+    window.PORTAL_URL = "{{ url_for('dashboard') }}";
+  </script>
+  <script src="{{ url_for('static', filename='js/intro.js') }}"></script>
+</body>
+</html>
