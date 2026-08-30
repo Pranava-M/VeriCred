@@ -1,0 +1,7 @@
+Flask>=3.0
+pandas>=2.0
+numpy>=1.24
+
+# Only needed once you deploy to real Polygon Amoy (see blockchain_real/DEPLOY_GUIDE.md)
+web3>=7.0
+python-dotenv>=1.0

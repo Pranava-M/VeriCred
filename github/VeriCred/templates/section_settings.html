@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}Settings &amp; Security &mdash; VeriCred{% endblock %}
+{% block content %}
+
+<div class="section-title">Settings &amp; Security</div>
+
+<div class="two-col">
+  <div class="panel">
+    <h3>Officer Session</h3>
+    <div class="kv-row"><span class="k">Session</span><span class="v">Officer (Demo Session)</span></div>
+    <div class="kv-row"><span class="k">Branch</span><span class="v">Branch #04</span></div>
+    <div class="kv-row"><span class="k">Access Level</span><span class="v">Reviewing Officer</span></div>
+    <div class="kv-row"><span class="k">Final Authority</span><span class="v">No &mdash; forwards to Bank Manager</span></div>
+  </div>
+
+  <div class="panel">
+    <h3>Blockchain &amp; Oracle Configuration</h3>
+    <div class="kv-row">
+      <span class="k">Mode</span>
+      <span class="v">
+        {% if use_real_blockchain %}
+          <span class="pill pill-approved" style="background:var(--emerald-bg);color:var(--emerald);"><span class="pill-dot"></span>Real Polygon Amoy</span>
+        {% else %}
+          <span class="pill pill-pending"><span class="pill-dot"></span>Simulated Ledger</span>
+        {% endif %}
+      </span>
+    </div>
+    <div class="kv-row"><span class="k">Consensus</span><span class="v">Proof of Stake (simulated)</span></div>
+    <div class="kv-row"><span class="k">Chain Integrity</span><span class="v">{{ 'Verified' if chain_verified else 'COMPROMISED' }}</span></div>
+    <div class="kv-row"><span class="k">Total Blocks</span><span class="v">{{ chain_length }}</span></div>
+    <div class="kv-row"><span class="k">Recorded Decisions</span><span class="v">{{ total_records }}</span></div>
+  </div>
+</div>
+
+<div class="panel" style="margin-top:20px;">
+  <h3>Switching to Real Blockchain Mode</h3>
+  <p style="font-size:13px;color:var(--text-secondary);line-height:1.6;">
+    This portal currently runs in {{ 'real Polygon Amoy' if use_real_blockchain else 'simulated ledger' }} mode.
+    To switch to real on-chain mode, set the <span class="mono">USE_REAL_BLOCKCHAIN=true</span> environment variable
+    and fill in <span class="mono">blockchain_real/.env</span> with your Alchemy RPC URL, oracle private key, and
+    deployed contract address &mdash; see <span class="mono">blockchain_real/DEPLOY_GUIDE.md</span> for the full walkthrough.
+  </p>
+  <a href="{{ url_for('blockchain_page') }}" class="btn btn-outline" style="margin-top:10px;">View Blockchain Ledger &rarr;</a>
+</div>
+
+{% endblock %}

@@ -1,0 +1,18 @@
+{
+  "101": {
+    "requested_loan_override": null,
+    "status": "Forwarded to Manager"
+  },
+  "102": {
+    "requested_loan_override": null,
+    "status": "Pending Review"
+  },
+  "103": {
+    "requested_loan_override": null,
+    "status": "Pending Review"
+  },
+  "104": {
+    "requested_loan_override": null,
+    "status": "Declined by Officer"
+  }
+}

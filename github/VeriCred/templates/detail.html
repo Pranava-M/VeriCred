@@ -1,0 +1,312 @@
+{% extends "base.html" %}
+{% block title %}{{ a.applicant_name }} &mdash; VeriCred{% endblock %}
+{% block content %}
+
+<a href="{{ url_for('dashboard') }}" class="back-link">&larr; Back to loan requests</a>
+
+<div class="detail-grid">
+
+  <!-- LEFT SIDEBAR: KYC -->
+  <div>
+    <div class="panel">
+      <div class="photo-placeholder">
+        <div class="big-id">{{ a.display_id }}</div>
+        <div>Photo Pending Upload</div>
+      </div>
+      <h3 style="font-size:17px;">{{ a.applicant_name }}</h3>
+      <div style="font-size:12.5px;color:var(--text-secondary);margin-bottom:12px;">{{ a.application_id }}</div>
+
+      <div class="kv-row"><span class="k">DOB</span><span class="v">{{ a.profile.dob }}</span></div>
+      <div class="kv-row"><span class="k">Age</span><span class="v">{{ a.profile.age }}</span></div>
+      <div class="kv-row"><span class="k">Gender</span><span class="v">{{ a.profile.gender }}</span></div>
+      <div class="kv-row"><span class="k">Blood Group</span><span class="v">{{ a.profile.blood_group }}</span></div>
+      <div class="kv-row"><span class="k">Marital Status</span><span class="v">{{ a.profile.marital_status }}</span></div>
+      <div class="kv-row"><span class="k">Mobile</span><span class="v">{{ a.profile.mobile_number }}</span></div>
+      <div class="kv-row"><span class="k">Email</span><span class="v" style="font-size:11px;">{{ a.profile.email }}</span></div>
+      <div class="kv-row"><span class="k">City</span><span class="v">{{ a.profile.address_city }}, {{ a.profile.address_state }}</span></div>
+      <div class="kv-row"><span class="k">Occupation</span><span class="v" style="font-size:12px;">{{ a.profile.occupation }}</span></div>
+      <div class="kv-row"><span class="k">Employment</span><span class="v" style="font-size:11px;">{{ a.profile.employment_type }}</span></div>
+      <div class="kv-row"><span class="k">Joined</span><span class="v">{{ a.profile.joining_date }}</span></div>
+    </div>
+
+    <div class="panel">
+      <h3>Identity Documents</h3>
+      <div class="kv-row"><span class="k">PAN Number</span><span class="v">{{ a.profile.pan_number }}</span></div>
+      <div class="kv-row"><span class="k">Aadhaar Number</span><span class="v">{{ a.profile.aadhaar_number }}</span></div>
+      <div class="kv-row"><span class="k">Voter ID</span><span class="v">{{ a.profile.voter_id }}</span></div>
+      <div class="kv-row"><span class="k">Driving Licence</span><span class="v" style="font-size:11.5px;">{{ a.profile.driving_licence_number }}</span></div>
+      <div class="kv-row"><span class="k">Vehicle Reg. No.</span><span class="v">{{ a.profile.vehicle_registration_number }}</span></div>
+      <div class="kv-row"><span class="k">Insurance</span><span class="v">{{ a.profile.insurance_status }}</span></div>
+      <div class="kv-row"><span class="k">KYC Status</span><span class="v">{{ a.profile.kyc_status }}</span></div>
+    </div>
+
+    <div class="panel">
+      <h3>Bank &amp; Credit Details</h3>
+      <div class="kv-row"><span class="k">Bank</span><span class="v" style="font-size:12px;">{{ a.profile.bank_name }}</span></div>
+      <div class="kv-row"><span class="k">Branch</span><span class="v" style="font-size:12px;">{{ a.profile.branch_name }}</span></div>
+      <div class="kv-row"><span class="k">IFSC</span><span class="v">{{ a.profile.ifsc_code }}</span></div>
+      <div class="kv-row"><span class="k">Account No.</span><span class="v">{{ a.profile.account_number }}</span></div>
+      <div class="kv-row"><span class="k">UPI ID</span><span class="v" style="font-size:11px;">{{ a.profile.upi_id }}</span></div>
+      <div class="kv-row"><span class="k">Current Balance</span><span class="v">&#8377;{{ "{:,}".format(a.bank_balance_inr) }}</span></div>
+      <div class="kv-row"><span class="k">CIBIL Score</span><span class="v">{{ a.cibil_score }} ({{ a.credit_rating }})</span></div>
+      <div class="kv-row"><span class="k">Existing Loans</span><span class="v" style="font-size:11px;">{{ a.profile.existing_loans }}</span></div>
+    </div>
+
+    <div class="panel">
+      <h3>Blockchain Status</h3>
+      {% if a.blockchain_verified %}
+        <span class="badge-verified">&#10003; {{ a.blockchain_records }} record(s) on-chain</span>
+        <div style="margin-top:12px;" class="kv-row"><span class="k">Latest block</span><span class="v">#{{ a.latest_block.index }}</span></div>
+      {% else %}
+        <span class="badge-unverified">&#9679; No decision recorded yet</span>
+        <p style="font-size:12px;color:var(--text-secondary);margin-top:10px;">Forwarding or declining writes an immutable, hash-linked record to the ledger.</p>
+      {% endif %}
+      <a href="{{ url_for('blockchain_page') }}" style="font-size:12.5px;display:inline-block;margin-top:10px;color:var(--indigo);">View full ledger &rarr;</a>
+    </div>
+  </div>
+
+  <!-- RIGHT MAIN -->
+  <div>
+
+    <!-- Risk Meter -->
+    <div class="panel">
+      <h3>Risk Meter <span style="font-weight:400;color:var(--text-secondary);font-size:12px;">(blockchain-verified &middot; higher = safer)</span></h3>
+      <div class="risk-meter-wrap">
+        <div class="risk-gauge">
+          <svg width="160" height="160" viewBox="0 0 130 130">
+            <circle cx="65" cy="65" r="54" fill="none" stroke="#E4E7EC" stroke-width="12"/>
+            <circle id="riskCircle" cx="65" cy="65" r="54" fill="none"
+                    stroke="{{ '#9C7A24' if a.risk_color=='green' else ('#C1662F' if a.risk_color=='amber' else '#B42318') }}"
+                    stroke-width="12" stroke-linecap="round"
+                    stroke-dasharray="339.3" stroke-dashoffset="{{ 339.3 * (1 - a.risk_meter/100) }}"
+                    transform="rotate(-90 65 65)" style="transition: stroke-dashoffset .5s ease, stroke .4s ease;"/>
+          </svg>
+          <div id="riskValue" class="risk-gauge-value" style="color: {{ '#9C7A24' if a.risk_color=='green' else ('#C1662F' if a.risk_color=='amber' else '#B42318') }};">{{ a.risk_meter }}</div>
+        </div>
+        <div>
+          <div id="riskBand" style="font-size:20px;font-weight:700;font-family:var(--font-display); color:{{ '#9C7A24' if a.risk_color=='green' else ('#C1662F' if a.risk_color=='amber' else '#B42318') }};">{{ a.risk_band }}</div>
+          <div style="font-size:12.5px;color:var(--text-secondary);margin-top:8px;">Blended from:</div>
+          <div style="font-size:12.5px;margin-top:4px;">AI Work-History (55%): <span id="cAi" class="mono">{{ a.risk_components.ai_component }}</span></div>
+          <div style="font-size:12.5px;">CIBIL Score (30%): <span class="mono">{{ a.risk_components.cibil_component }}</span></div>
+          <div style="font-size:12.5px;">Balance Adequacy (15%): <span id="cBal" class="mono">{{ a.risk_components.balance_component }}</span></div>
+          <div class="risk-legend">
+            <span><span class="dot" style="background:#9C7A24;"></span>&ge;75 Low</span>
+            <span><span class="dot" style="background:#C1662F;"></span>50&ndash;74 Moderate</span>
+            <span><span class="dot" style="background:#B42318;"></span>&lt;50 High</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- AI sub-scores -->
+    <div class="panel">
+      <h3>Work-History Sub-Scores (Blockchain-Verified)</h3>
+      {% for key, label in [('rating','Customer Rating'), ('cancellation','Reliability (Cancellations)'), ('on_time','On-Time Completion'), ('activity','Activity Consistency'), ('complaint','Complaint-Free Rate'), ('payment_digital','Digital Payment Usage'), ('earnings_stability','Earnings Stability')] %}
+      <div class="subscore-bar-row">
+        <div class="subscore-bar-label"><span>{{ label }}</span><span class="mono">{{ (a.ai_sub_scores[key]*100)|round|int }}%</span></div>
+        <div class="subscore-bar-track"><div class="subscore-bar-fill" style="width:{{ (a.ai_sub_scores[key]*100)|round|int }}%;"></div></div>
+      </div>
+      {% endfor %}
+    </div>
+
+    <!-- Day / Week / Month activity -->
+    <div class="panel">
+      <h3>Activity Summary</h3>
+      <div class="four-col" style="margin-bottom:16px;">
+        <div class="metric-block"><div class="label">Rides / Day</div><div class="big-number">{{ a.features.avg_rides_per_day }}</div></div>
+        <div class="metric-block"><div class="label">Rides / Week</div><div class="big-number">{{ a.features.avg_rides_per_week }}</div></div>
+        <div class="metric-block"><div class="label">Rides / Month</div><div class="big-number">{{ a.features.avg_rides_per_month }}</div></div>
+        <div class="metric-block"><div class="label">Avg. Rating</div><div class="big-number">{{ a.features.avg_rating }}</div></div>
+      </div>
+      <div class="four-col" style="margin-bottom:16px;">
+        <div class="metric-block"><div class="label">Km / Day</div><div class="big-number">{{ a.features.avg_km_per_day }}</div></div>
+        <div class="metric-block"><div class="label">Km / Week</div><div class="big-number">{{ a.features.avg_km_per_week }}</div></div>
+        <div class="metric-block"><div class="label">Km / Month</div><div class="big-number">{{ a.features.avg_km_per_month }}</div></div>
+        <div class="metric-block"><div class="label">Total Km (6mo)</div><div class="big-number">{{ "{:,}".format(a.features.total_km|round|int) }}</div></div>
+      </div>
+      <div class="four-col">
+        <div class="metric-block"><div class="label">Income / Day</div><div class="big-number">&#8377;{{ a.features.avg_income_per_day|round|int }}</div></div>
+        <div class="metric-block"><div class="label">Income / Week</div><div class="big-number">&#8377;{{ "{:,}".format(a.features.avg_income_per_week|round|int) }}</div></div>
+        <div class="metric-block"><div class="label">Cancellations / Day</div><div class="big-number">{{ a.features.avg_cancellations_per_day }}</div></div>
+        <div class="metric-block"><div class="label">Cancellations / Month</div><div class="big-number">{{ a.features.avg_cancellations_per_month }}</div></div>
+      </div>
+    </div>
+
+    <!-- Financial risk -->
+    <div class="panel">
+      <h3>Financial Risk Analysis</h3>
+      <div class="three-col" style="margin-bottom:20px;">
+        <div class="metric-block"><div class="label">Avg. Monthly Income</div><div class="big-number">&#8377;{{ "{:,}".format(a.features.avg_monthly_earnings|round|int) }}</div></div>
+        <div class="metric-block"><div class="label">Est. Monthly Expenses</div><div class="big-number">&#8377;{{ "{:,}".format(a.monthly_expenses_inr|round|int) }}</div></div>
+        <div class="metric-block"><div class="label">Est. Monthly Savings</div><div id="mSavings" class="big-number">&#8377;{{ "{:,}".format(a.estimated_monthly_savings_inr|round|int) }}</div></div>
+      </div>
+      <div class="three-col">
+        <div class="metric-block"><div class="label">Requested Loan EMI</div><div id="mEmi" class="big-number">&#8377;{{ "{:,}".format(a.requested_loan_emi_inr|round|int) }}/mo</div></div>
+        <div class="metric-block"><div class="label">Debt-to-Income Ratio</div><div id="mDti" class="big-number">{{ a.debt_to_income_ratio_pct }}%</div></div>
+        <div class="metric-block"><div class="label">System Suggested Max</div><div id="mMax" class="big-number">&#8377;{{ "{:,}".format(a.system_suggested_max_inr|round|int) }}</div></div>
+      </div>
+    </div>
+
+    <!-- Editable loan + actions -->
+    <div class="panel">
+      <h3>Loan Amount &amp; Decision</h3>
+      <div class="edit-loan-form">
+        <input type="number" id="loanInput" value="{{ a.requested_loan_inr }}" min="0" max="200000" step="500">
+        <span style="font-size:12px;color:var(--text-secondary);">Rs. &mdash; risk meter updates live as you type</span>
+      </div>
+      <div id="clampWarning" style="display:none;font-size:12.5px;color:var(--rose);margin-top:8px;">
+        This platform only supports micro-loans up to Rs. 2,00,000. Your amount has been capped for the calculation below.
+      </div>
+      <form method="POST" action="{{ url_for('save_amount', worker_id=a.worker_id) }}" id="saveForm" style="margin-top:10px;">
+        <input type="hidden" name="requested_loan" id="hiddenAmount" value="{{ a.requested_loan_inr }}">
+        <button type="submit" class="btn btn-outline">Save This Amount</button>
+      </form>
+
+      {% if a.workflow_status == 'Pending Review' %}
+      <div class="action-row">
+        <form method="POST" action="{{ url_for('forward_to_manager', worker_id=a.worker_id) }}" style="flex:1;">
+          <button type="submit" class="btn btn-forward btn-block">Forward to Bank Manager</button>
+        </form>
+        <form method="POST" action="{{ url_for('decline', worker_id=a.worker_id) }}" style="flex:1;">
+          <button type="submit" class="btn btn-decline btn-block">Decline at My Level</button>
+        </form>
+      </div>
+      {% else %}
+      <div style="margin-top:16px;padding:14px 16px;background:var(--indigo-bg);border-radius:8px;font-size:13.5px;color:var(--indigo);font-weight:600;">
+        {% if a.workflow_status == 'Forwarded to Manager' %}
+          &#8594; This request has been forwarded to the Bank Manager for final approval.
+        {% else %}
+          This request was declined at officer level.
+        {% endif %}
+      </div>
+      <form method="POST" action="{{ url_for('reopen', worker_id=a.worker_id) }}" style="margin-top:10px;">
+        <button type="submit" class="btn btn-outline">Reopen for Review</button>
+      </form>
+      {% endif %}
+    </div>
+
+    <!-- Pros / cons -->
+    <div class="panel">
+      <h3>Work-History Observations</h3>
+      <div class="pros-cons">
+        <div class="pros">
+          <h4>Strengths</h4>
+          <ul>{% for p in a.pros %}<li>{{ p }}</li>{% endfor %}{% if not a.pros %}<li>No standout strengths flagged.</li>{% endif %}</ul>
+        </div>
+        <div class="cons">
+          <h4>Concerns</h4>
+          <ul>{% for c in a.cons %}<li>{{ c }}</li>{% endfor %}{% if not a.cons %}<li>No major concerns flagged.</li>{% endif %}</ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Charts -->
+    <div class="panel chart-card">
+      <h3>Work &amp; Earnings Analytics</h3>
+      <div class="chart-grid">
+        <div><canvas id="monthlyChart" height="220"></canvas></div>
+        <div><canvas id="ridesCancelChart" height="220"></canvas></div>
+        <div><canvas id="statusChart" height="220"></canvas></div>
+        <div><canvas id="paymentChart" height="220"></canvas></div>
+        <div><canvas id="weekdayChart" height="220"></canvas></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const workerId = "{{ a.worker_id }}";
+const loanInput = document.getElementById('loanInput');
+const hiddenAmount = document.getElementById('hiddenAmount');
+let debounceTimer = null;
+
+function colorFor(band) {
+  if (band === 'Low Risk') return '#9C7A24';
+  if (band === 'Moderate Risk') return '#C1662F';
+  return '#B42318'; // High Risk and Critical Risk both render red
+}
+
+function fmtMoney(n) { return 'Rs. ' + Math.round(n).toLocaleString('en-IN'); }
+
+async function recalc() {
+  const amount = parseFloat(loanInput.value) || 0;
+  hiddenAmount.value = amount;
+  try {
+    const res = await fetch(`/api/recalc/${workerId}?amount=${amount}`);
+    const d = await res.json();
+    if (d.error) return;
+
+    const clampWarning = document.getElementById('clampWarning');
+    clampWarning.style.display = d.was_clamped ? 'block' : 'none';
+
+    const circumference = 339.3;
+    const offset = circumference * (1 - d.risk_meter / 100);
+    const circle = document.getElementById('riskCircle');
+    circle.setAttribute('stroke-dashoffset', offset);
+    circle.setAttribute('stroke', colorFor(d.risk_band));
+
+    const valueEl = document.getElementById('riskValue');
+    valueEl.textContent = d.risk_meter;
+    valueEl.style.color = colorFor(d.risk_band);
+
+    const bandEl = document.getElementById('riskBand');
+    bandEl.textContent = d.risk_band;
+    bandEl.style.color = colorFor(d.risk_band);
+
+    document.getElementById('cAi').textContent = d.risk_components.ai_component;
+    document.getElementById('cBal').textContent = d.risk_components.balance_component;
+
+    document.getElementById('mEmi').textContent = fmtMoney(d.requested_loan_emi_inr) + '/mo';
+    document.getElementById('mDti').textContent = d.debt_to_income_ratio_pct + '%';
+    document.getElementById('mMax').textContent = fmtMoney(d.system_suggested_max_inr);
+    document.getElementById('mSavings').textContent = fmtMoney(d.estimated_monthly_savings_inr);
+  } catch (e) { console.error(e); }
+}
+
+loanInput.addEventListener('input', () => {
+  clearTimeout(debounceTimer);
+  debounceTimer = setTimeout(recalc, 350);
+});
+
+// Charts
+const monthlyLabels = {{ charts.monthly_labels|tojson }};
+new Chart(document.getElementById('monthlyChart'), {
+  type: 'line',
+  data: { labels: monthlyLabels, datasets: [{ label: 'Monthly Earnings (Rs.)', data: {{ charts.monthly_values|tojson }},
+    borderColor: '#3538CD', backgroundColor: 'rgba(53,56,205,0.08)', fill: true, tension: 0.35 }] },
+  options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } }
+});
+
+new Chart(document.getElementById('ridesCancelChart'), {
+  type: 'bar',
+  data: { labels: monthlyLabels, datasets: [
+    { label: 'Completed Rides', data: {{ charts.monthly_rides_values|tojson }}, backgroundColor: '#9C7A24', borderRadius: 4 },
+    { label: 'Cancellations', data: {{ charts.monthly_cancel_values|tojson }}, backgroundColor: '#B42318', borderRadius: 4 }
+  ]},
+  options: { plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 11 } } } }, scales: { y: { beginAtZero: true } } }
+});
+
+new Chart(document.getElementById('statusChart'), {
+  type: 'doughnut',
+  data: { labels: {{ charts.status_labels|tojson }}, datasets: [{ data: {{ charts.status_values|tojson }},
+    backgroundColor: ['#9C7A24', '#C1662F', '#B42318'] }] },
+  options: { plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 11 } } } } }
+});
+
+new Chart(document.getElementById('paymentChart'), {
+  type: 'bar',
+  data: { labels: {{ charts.payment_labels|tojson }}, datasets: [{ label: 'Rides', data: {{ charts.payment_values|tojson }},
+    backgroundColor: '#3538CD', borderRadius: 4 }] },
+  options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } }
+});
+
+new Chart(document.getElementById('weekdayChart'), {
+  type: 'bar',
+  data: { labels: {{ charts.weekday_labels|tojson }}, datasets: [{ label: 'Avg Earnings (Rs.)', data: {{ charts.weekday_values|tojson }},
+    backgroundColor: '#9C7A24', borderRadius: 4 }] },
+  options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } }
+});
+</script>
+
+{% endblock %}

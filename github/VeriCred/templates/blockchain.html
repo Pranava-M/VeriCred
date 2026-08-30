@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% block title %}Blockchain Ledger &mdash; VeriCred{% endblock %}
+{% block content %}
+
+<div class="section-title">Blockchain Verification Ledger</div>
+
+{% if verification.valid %}
+  <div class="verify-banner verify-ok">&#10003; Chain integrity verified &mdash; {{ chain|length }} block(s), no tampering detected.</div>
+{% else %}
+  <div class="verify-banner verify-fail">&#10007; Chain integrity FAILED at block #{{ verification.broken_at_block }} &mdash; {{ verification.reason }}</div>
+{% endif %}
+
+<div class="panel" style="margin-bottom:24px;">
+  <h3>Network Info</h3>
+  <div class="two-col">
+    <div>
+      <div class="kv-row"><span class="k">Network</span><span class="v">Polygon Amoy Testnet (simulated)</span></div>
+      <div class="kv-row"><span class="k">Consensus</span><span class="v">Proof of Stake (simulated)</span></div>
+      <div class="kv-row"><span class="k">Validator Node</span><span class="v">Oracle-Node-1</span></div>
+    </div>
+    <div>
+      <div class="kv-row"><span class="k">Total Blocks</span><span class="v">{{ chain|length }}</span></div>
+      <div class="kv-row"><span class="k">Total Decisions Recorded</span><span class="v">{{ chain|length - 1 }}</span></div>
+      <div class="kv-row"><span class="k">Ledger Status</span><span class="v">{{ 'Verified' if verification.valid else 'Compromised' }}</span></div>
+    </div>
+  </div>
+</div>
+
+<div class="section-title">Blocks (most recent first)</div>
+{% for block in chain|reverse %}
+<div class="chain-block">
+  <div class="block-header">
+    <span class="block-index">Block #{{ block.index }}</span>
+    <span style="font-size:12px;color:var(--text-secondary);">{{ block.timestamp }}</span>
+  </div>
+
+  {% if block.index == 0 %}
+    <div style="font-size:13.5px;color:var(--text-secondary);">Genesis Block &mdash; ledger initialized</div>
+  {% else %}
+    <div class="two-col" style="margin-bottom:10px;">
+      <div>
+        <div class="kv-row"><span class="k">Applicant</span><span class="v">{{ block.data.applicant_name }} (#{{ block.data.worker_id }})</span></div>
+        <div class="kv-row"><span class="k">Application ID</span><span class="v">{{ block.data.application_id }}</span></div>
+        <div class="kv-row"><span class="k">AI Score</span><span class="v">{{ block.data.ai_score }}</span></div>
+        <div class="kv-row"><span class="k">CIBIL</span><span class="v">{{ block.data.cibil_score }}</span></div>
+      </div>
+      <div>
+        <div class="kv-row"><span class="k">Risk Meter</span><span class="v">{{ block.data.risk_meter }} ({{ block.data.risk_band }})</span></div>
+        <div class="kv-row"><span class="k">Requested</span><span class="v">&#8377;{{ "{:,}".format(block.data.requested_amount_inr) }}</span></div>
+        <div class="kv-row"><span class="k">Action</span><span class="v">{{ block.data.action.replace('_',' ') }}</span></div>
+        <div class="kv-row"><span class="k">Reviewed By</span><span class="v">{{ block.data.reviewed_by }}</span></div>
+      </div>
+    </div>
+
+    {% set r = receipts[block.index] %}
+    <div class="two-col" style="font-size:12px;color:var(--text-secondary);">
+      <div>Gas used: <span class="mono">{{ r.gas_used }}</span> &middot; Gas price: <span class="mono">{{ r.gas_price_gwei }} gwei</span></div>
+      <div>Confirmations: <span class="mono">{{ r.confirmations }}</span> &middot; Block #: <span class="mono">{{ r.block_number }}</span></div>
+    </div>
+  {% endif %}
+
+  <div style="margin-top:10px;">
+    <div style="font-size:11px;color:var(--text-secondary);">Block Hash</div>
+    <div class="hash-value">{{ block.hash }}</div>
+  </div>
+  <div style="margin-top:6px;">
+    <div style="font-size:11px;color:var(--text-secondary);">Previous Hash</div>
+    <div class="hash-value">{{ block.previous_hash }}</div>
+  </div>
+</div>
+{% endfor %}
+
+{% endblock %}
